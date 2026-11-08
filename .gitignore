@@ -1,0 +1,45 @@
+# macOS
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Claude Code local settings and scratch
+.claude/settings.local.json
+CERBERUS.md
+
+# CAD tool temporaries and backups
+*.FCStd1
+*.FCBak
+*.blend1
+*.tmp
+*.bak
+*.log
+tmp/
+scratch/
+
+# Arduino / PlatformIO build output
+build/
+.pio/
+*.hex
+*.elf
+*.eep
+
+# Note: 3D model outputs (out/*.step, out/*.stl, out/parts/*.stl),
+# renders, the circuit SVG and the viewer HTML are versioned on purpose.

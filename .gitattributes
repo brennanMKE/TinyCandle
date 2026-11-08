@@ -1,0 +1,20 @@
+# Normalise line endings for text sources
+* text=auto eol=lf
+
+*.py   text diff=python
+*.md   text diff=markdown
+*.svg  text
+*.html text diff=html
+
+# 3D model files: never merge or diff as text, keep exact bytes
+*.step binary linguist-generated
+*.stp  binary linguist-generated
+*.stl  binary linguist-generated
+*.3mf  binary linguist-generated
+
+# Generated viewer (large inlined mesh data)
+out/candle_board_viewer.html linguist-generated -diff
+
+# Images
+*.png binary
+*.jpg binary

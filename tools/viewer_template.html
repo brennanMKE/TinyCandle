@@ -1,0 +1,272 @@
+<title>TinyCandle Driver Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: bench-sheet — 3D viewer left, spec panel right; stacks on phones */
+:root {
+  --bg: #eef0ee;
+  --surface: #f9faf8;
+  --fg: #1d2420;
+  --muted: #5d6862;
+  --line: #d3d8d4;
+  --accent: #a3561f;      /* tinned copper */
+  --stage: #dfe3df;
+  --font-display: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151a17; --surface: #1c221f; --fg: #e3e8e4; --muted: #96a19a;
+    --line: #2f3833; --accent: #e08a4a; --stage: #101412; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151a17; --surface: #1c221f; --fg: #e3e8e4; --muted: #96a19a;
+  --line: #2f3833; --accent: #e08a4a; --stage: #101412; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 20px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: 0.01em; }
+.sub { color: var(--muted); margin: 4px 0 0; max-width: 62ch; }
+.dims { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.dims b { color: var(--fg); font-weight: 500; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
+@media (max-width: 880px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.stage { position: relative; background: var(--stage); border: 1px solid var(--line); border-radius: 6px; aspect-ratio: 4 / 3; max-width: 100%; overflow: hidden; }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.hint { position: absolute; left: 12px; bottom: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--muted); pointer-events: none; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 12px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; }
+.seg button { font: 500 13px var(--font-body); background: var(--surface); color: var(--fg); border: 0; padding: 7px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+label.range { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+label.range input { accent-color: var(--accent); width: 140px; }
+aside { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin: 0 0 8px; }
+.parts { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.parts li { border-bottom: 1px solid var(--line); }
+.parts label { display: grid; grid-template-columns: 16px 12px minmax(0, 1fr) auto; font-variant-numeric: tabular-nums; gap: 10px; align-items: center; padding: 7px 2px; cursor: pointer; font-size: 14px; }
+.parts input { accent-color: var(--accent); margin: 0; }
+.sw { width: 12px; height: 12px; border-radius: 2px; border: 1px solid rgba(127,127,127,.4); }
+.parts li.grp { border-bottom: 0; padding: 12px 2px 2px; font-family: var(--font-display); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+.loc { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+td { padding: 5px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+td:first-child { color: var(--muted); padding-right: 12px; white-space: nowrap; }
+td.m { font-family: var(--font-mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+.note { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+.flag { color: var(--accent); font-weight: 500; }
+.below { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px 32px; margin-top: 28px; }
+.below > section { min-width: 0; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>TinyCandle Light</h1>
+      <p class="sub">ATtiny85 in a machined-pin socket on a 9×9 mini protoboard, with an 8-LED WS2812B ring centred over the chip. The light mounts on a jar lid and the glass jar turns upside down over it as the diffuser.</p>
+    </div>
+    <div class="dims"><b>Ø32</b> mm ring · <b>25 × 25</b> mm board · ring <b>15</b> mm above board on nylon standoffs · jar <b>Ø66 × 85</b> mm (placeholder)</div>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div class="stage" id="stage"><span class="hint">Drag to orbit · scroll or pinch to zoom</span></div>
+      <div class="toolbar">
+        <div class="seg" role="group" aria-label="Camera view">
+          <button id="v-iso" aria-pressed="true">Iso</button>
+          <button id="v-top" aria-pressed="false">Top</button>
+          <button id="v-bottom" aria-pressed="false">Solder side</button>
+          <button id="v-side" aria-pressed="false">Side</button>
+        </div>
+        <label class="range" for="explode">Explode <input id="explode" type="range" min="0" max="100" value="0"></label>
+        <label class="range" for="flicker"><input id="flicker" type="checkbox" checked> Flicker</label>
+      </div>
+    </div>
+
+    <aside>
+      <section>
+        <h2>Parts</h2>
+        <ul class="parts" id="parts"></ul>
+      </section>
+    </aside>
+  </div>
+
+  <div class="below">
+    <section>
+      <h2>Connections</h2>
+      <table>
+        <tr><td>5V rail</td><td class="m">D2–H2, F2–F3 (pin 8)</td></tr>
+        <tr><td>GND rail</td><td class="m">C8–H8, C6 (pin 4)–C7–C8</td></tr>
+        <tr><td>Decoupling</td><td class="m">0.1µF E3–D6; E3–F3, D6–C6</td></tr>
+        <tr><td>Data</td><td class="m">C5 (PB4)–B5, R B5/A5, A5–A4 → DIN</td></tr>
+        <tr><td>Bulk cap</td><td class="m">Flat over H–I, − H7–H8, + I7–I2–H2</td></tr>
+        <tr><td>Ring pads</td><td class="m">GND · 5V · DIN · DOUT (DOUT unused)</td></tr>
+        <tr><td>USB power</td><td class="m">H2 (5V), H8 (GND), from the solder side → cable through lid</td></tr>
+        <tr><td>Unused</td><td class="m">Pins 1, 2, 5, 6, 7</td></tr>
+        <tr><td>Drill</td><td class="m">G1 and B8 to 2.2 mm (no connections there)</td></tr>
+      </table>
+    </section>
+    <section>
+      <h2>Modeled dimensions</h2>
+      <table>
+        <tr><td>Board</td><td class="m">25.0 × 25.0 × 1.6, 9×9 holes Ø1.0</td></tr>
+        <tr><td>Mounting hole</td><td class="m"><span class="flag">Ø3.0 at E1 (assumed)</span></td></tr>
+        <tr><td>Socket</td><td class="m">Machined-pin DIP-8, 10.1 × 10.2 × 3.85, open frame</td></tr>
+        <tr><td>ATtiny85</td><td class="m">6.35 × 9.27 × 3.3 body</td></tr>
+        <tr><td>0.1µF cap</td><td class="m">3.6 × 2.4 × 1.4, flat under socket</td></tr>
+        <tr><td>Resistor</td><td class="m">1/4 W, Ø2.4 × 6.3, standing</td></tr>
+        <tr><td>Wires</td><td class="m">22 AWG power, 26 AWG data</td></tr>
+        <tr><td>LED ring</td><td class="m">Ø32 / Ø17.5 × 1.6, 5050 LEDs on r12.5</td></tr>
+        <tr><td>Ring position</td><td class="m">Centred on chip, 15 mm above board, 7.4 mm over chip top</td></tr>
+        <tr><td>Ring mount</td><td class="m">2× M2 × 15 M-F nylon standoffs at G1 and B8, holes drilled to 2.2, nuts under, M2 nylon screws on top</td></tr>
+        <tr><td>Bulk cap</td><td class="m">Ø6.3 × 7.7 (470µF 6.3V), lying flat</td></tr>
+        <tr><td>Mount</td><td class="m">M2.5 screw, 6 mm standoff at E1</td></tr>
+        <tr><td>Jar</td><td class="m"><span class="flag">Ø66 × 85, neck Ø61 (placeholder)</span></td></tr>
+      </table>
+      <p class="note">The 0.1µF cap lies flat inside the socket window. The ATtiny85 pulls straight out of the socket for reflashing. The ring sits on two white nylon standoffs; its holes are rotated to land on G1 and B8, the only free grid holes the right distance apart. Screw heads must be under Ø3.3 to clear the LEDs. The jar, lid, ring pad order and mounting hole are placeholders until measured.</p>
+    </section>
+  </div>
+</div>
+
+<script id="mesh" type="application/json">__MESH__</script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  const PARTS = [
+    { key: "jar",           name: "Glass jar (inverted)", loc: "placeholder", color: 0xcfe3e6, z: 9, glass: true, group: "Jar" },
+    { key: "jar_lid",       name: "Jar lid (base)",       loc: "placeholder", color: 0x9aa3a8, z: -3, metal: true, group: "Jar" },
+    { key: "usb_cable",     name: "USB cable",            loc: "through lid", color: 0x2b2b2b, z: -2, group: "Jar" },
+    { key: "screw_m2_5",    name: "M2.5 screw + nut",     loc: "E1",       color: 0x8d9399, z: 0, metal: true, group: "Jar" },
+    { key: "standoff",      name: "6 mm standoff",        loc: "E1",       color: 0xe8e2d0, z: -1.5, group: "Jar" },
+    { key: "ring_screws",   name: "M2 nylon screws",      loc: "top",      color: 0xf4f4f0, z: 7, group: "Ring mount" },
+    { key: "ring_standoffs",name: "M2 × 15 nylon standoffs", loc: "G1, B8", color: 0xf4f4f0, z: 3.5, group: "Ring mount" },
+    { key: "ring_nuts",     name: "M2 nylon nuts",        loc: "under board", color: 0xf4f4f0, z: -1.6, group: "Ring mount" },
+    { key: "ring_pcb",      name: "WS2812B ring PCB",     loc: "Ø32",      color: 0x161616, z: 6, group: "Ring" },
+    { key: "ring_leds",     name: "8× 5050 LEDs",         loc: "",         color: 0xf2f0ea, z: 6, group: "Ring" },
+    { key: "ring_lenses",   name: "LED emitters",         loc: "",         color: 0xff9a3c, z: 6, glow: true, group: "Ring" },
+    { key: "ring_smd_caps", name: "Ring SMD caps",        loc: "",         color: 0xb08850, z: 6, group: "Ring" },
+    { key: "ring_back_pads",name: "Ring pads (back)",     loc: "GND 5V DIN DOUT", color: 0xd4a017, z: 6, metal: true, group: "Ring" },
+    { key: "wire_ring_5v",  name: "Ring 5V wire",         loc: "D2",       color: 0xe53935, z: 3, group: "Wiring" },
+    { key: "wire_ring_gnd", name: "Ring GND wire",        loc: "D8",       color: 0x555555, z: 3, group: "Wiring" },
+    { key: "wire_ring_din", name: "Ring DIN wire",        loc: "A4",       color: 0x2e9e4f, z: 3, group: "Wiring" },
+    { key: "wire_usb_5v",   name: "USB 5V wire",          loc: "H2, under", color: 0xc62828, z: -1, group: "Wiring" },
+    { key: "wire_usb_gnd",  name: "USB GND wire",         loc: "H8, under", color: 0x3b3b3b, z: -1, group: "Wiring" },
+    { key: "board",         name: "Protoboard",           loc: "9×9",      color: 0x2f6b3f, z: 0, group: "Driver board" },
+    { key: "pads",          name: "Pads (solder side)",   loc: "",         color: 0xc9c4b5, z: -0.6, metal: true, group: "Driver board" },
+    { key: "bridges",       name: "Solder bridges",       loc: "8",        color: 0xbfc3c7, z: -1.2, metal: true, group: "Driver board" },
+    { key: "cap_100nF",     name: "0.1µF ceramic cap",    loc: "E3–D6",    color: 0xd9a441, z: 0.6, group: "Driver board" },
+    { key: "socket",        name: "DIP-8 socket body",    loc: "C3–F6",    color: 0x2a2a2a, z: 1.2, group: "Driver board" },
+    { key: "socket_contacts", name: "Machined-pin contacts", loc: "8",     color: 0xd9b25a, z: 1.2, metal: true, group: "Driver board" },
+    { key: "attiny85",      name: "ATtiny85",             loc: "pin 1 C3", color: 0x151515, z: 2, group: "Driver board" },
+    { key: "resistor",      name: "330–470Ω resistor",    loc: "A5/B5",    color: 0xd6c09a, z: 0.8, group: "Driver board" },
+    { key: "bulk_cap",      name: "470µF bulk cap",       loc: "H7 − / I7 +", color: 0x1f3f8f, z: 0.8, group: "Driver board" },
+    { key: "bulk_cap_leads",name: "Bulk cap leads",       loc: "",         color: 0xbfc3c7, z: 0.8, metal: true, group: "Driver board" },
+  ];  const data = JSON.parse(document.getElementById("mesh").textContent);
+  const stage = document.getElementById("stage");
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  stage.prepend(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(30, 4 / 3, 1, 2000);
+  camera.up.set(0, 0, 1);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.target.set(0, 0, 28);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x404848, 0.75));
+  const key = new THREE.DirectionalLight(0xffffff, 0.75); key.position.set(30, -40, 60); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-40, 30, -30); scene.add(rim);
+
+  const meshes = {};
+  const glowMats = [];
+  let lastGroup = "";
+  const list = document.getElementById("parts");
+  PARTS.forEach(p => {
+    const bin = atob(data[p.key]);
+    const i16 = new Int16Array(bin.length / 2);
+    for (let i = 0; i < i16.length; i++) {
+      const v = bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8);
+      i16[i] = v > 32767 ? v - 65536 : v;
+    }
+    const pos = new Float32Array(i16.length);
+    for (let i = 0; i < i16.length; i++) pos[i] = i16[i] / 200;
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.computeVertexNormals();
+    const mat = new THREE.MeshStandardMaterial({
+      color: p.color, roughness: p.metal ? 0.35 : (p.glass ? 0.15 : 0.6), metalness: p.metal ? 0.7 : 0.05, side: THREE.DoubleSide
+    });
+    if (p.glass) { mat.transparent = true; mat.opacity = 0.18; mat.depthWrite = false; }
+    if (p.glow) { mat.emissive = new THREE.Color(0xff8a2a); mat.emissiveIntensity = 1; glowMats.push(mat); }
+    const m = new THREE.Mesh(g, mat);
+    if (p.glass) m.renderOrder = 2;
+    scene.add(m); meshes[p.key] = m;
+    if (p.group !== lastGroup) {
+      const h = document.createElement("li"); h.className = "grp"; h.textContent = p.group; list.appendChild(h); lastGroup = p.group;
+    }
+
+    const li = document.createElement("li");
+    const hex = "#" + p.color.toString(16).padStart(6, "0");
+    li.innerHTML = `<label><input type="checkbox" id="show-${p.key}" checked><span class="sw" style="background:${hex}"></span><span>${p.name}</span><span class="loc">${p.loc}</span></label>`;
+    li.querySelector("input").addEventListener("change", e => { m.visible = e.target.checked; });
+    list.appendChild(li);
+  });
+
+  const VIEWS = {
+    iso:    [[-110, -150, 120]],
+    top:    [[0, -1, 230]],
+    bottom: [[0, -1, -230]],
+    side:   [[0, -230, 30]],
+  };
+  function setView(name) {
+    const d = VIEWS[name][0];
+    camera.position.set(d[0], d[1], d[2]);
+    controls.target.set(0, 0, 28);
+    controls.update();
+    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.id === "v-" + name)));
+  }
+  ["iso", "top", "bottom", "side"].forEach(n => document.getElementById("v-" + n).addEventListener("click", () => setView(n)));
+  setView("iso");
+
+  const explode = document.getElementById("explode");
+  function applyExplode() {
+    const k = explode.value / 100 * 6;
+    PARTS.forEach(p => { meshes[p.key].position.z = p.z * k; });
+  }
+  explode.addEventListener("input", applyExplode);
+
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage);
+  resize();
+
+  const flicker = document.getElementById("flicker");
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (still) flicker.checked = false;
+  let level = 0.8, target = 0.8, last = 0;
+  (function loop(t) {
+    if (flicker.checked && t - last > 30) {
+      last = t;
+      if (Math.random() < 0.02) target = 0.3 + Math.random() * 0.2;
+      else if (Math.random() < 0.25) target = 0.55 + Math.random() * 0.45;
+      level += (target - level) / 4;
+    } else if (!flicker.checked) level = 0.8;
+    glowMats.forEach(m => { m.emissiveIntensity = level * 1.4; });
+    controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop);
+  })(0);
+})();
+</script>

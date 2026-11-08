@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" width="1000" height="720" font-family="Helvetica, Arial, sans-serif">
+  <title>TinyCandle circuit</title>
+  <defs>
+    <style>
+      .p5v { stroke: #d32f2f; stroke-width: 3; fill: none; stroke-linecap: round; }
+      .gnd { stroke: #2b2b2b; stroke-width: 3; fill: none; stroke-linecap: round; }
+      .dat { stroke: #2e9e4f; stroke-width: 3; fill: none; stroke-linecap: round; }
+      .pin { stroke: #2b2b2b; stroke-width: 2; fill: none; }
+      .nc  { stroke: #9a9a9a; stroke-width: 2; }
+      .lbl { font-size: 13px; fill: #2b2b2b; }
+      .sm  { font-size: 11px; fill: #6b6b6b; }
+      .hole { font-size: 11px; fill: #a3561f; font-family: Menlo, Consolas, monospace; }
+      .pinlbl { font-size: 12px; fill: #2b2b2b; font-family: Menlo, Consolas, monospace; }
+      .pinnum { font-size: 11px; fill: #6b6b6b; }
+      .ttl { font-size: 22px; font-weight: bold; fill: #1d2420; }
+      .sub { font-size: 13px; fill: #5d6862; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="720" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="40" y="48" class="ttl">TinyCandle circuit</text>
+  <text x="40" y="72" class="sub">USB 5V feeds the LED ring and the ATtiny85 side by side. The ATtiny85 only sends the ring a data signal.</text>
+
+  <!-- Rails -->
+  <line x1="120" y1="130" x2="900" y2="130" class="p5v"/>
+  <text x="430" y="120" class="lbl" fill="#d32f2f" style="fill:#d32f2f;font-weight:bold">5V rail</text>
+  <text x="490" y="120" class="hole">row 2: D2–H2</text>
+  <line x1="120" y1="560" x2="900" y2="560" class="gnd"/>
+  <text x="430" y="582" class="lbl" style="font-weight:bold">GND rail</text>
+  <text x="498" y="582" class="hole">row 8: C8–H8</text>
+
+  <!-- USB input -->
+  <rect x="860" y="270" width="110" height="150" rx="8" fill="#f3f4f3" stroke="#2b2b2b" stroke-width="2"/>
+  <text x="915" y="330" text-anchor="middle" class="lbl" style="font-weight:bold;font-size:16px">USB</text>
+  <text x="915" y="350" text-anchor="middle" class="sm">5V charger</text>
+  <text x="915" y="366" text-anchor="middle" class="sm">1A or more</text>
+  <line x1="900" y1="270" x2="900" y2="130" class="p5v"/>
+  <line x1="900" y1="420" x2="900" y2="560" class="gnd"/>
+  <circle cx="900" cy="130" r="5" fill="#d32f2f"/>
+  <circle cx="900" cy="560" r="5" fill="#2b2b2b"/>
+  <text x="908" y="205" class="hole">H2</text>
+  <text x="908" y="495" class="hole">H8</text>
+  <text x="866" y="262" class="sm">+5V</text>
+  <text x="866" y="438" class="sm">GND</text>
+
+  <!-- C2 bulk cap -->
+  <line x1="780" y1="130" x2="780" y2="322" class="p5v"/>
+  <line x1="758" y1="322" x2="802" y2="322" stroke="#2b2b2b" stroke-width="3"/>
+  <path d="M758 342 Q780 330 802 342" stroke="#2b2b2b" stroke-width="3" fill="none"/>
+  <line x1="780" y1="337" x2="780" y2="560" class="gnd"/>
+  <text x="806" y="316" class="lbl" style="font-weight:bold">+</text>
+  <circle cx="780" cy="130" r="5" fill="#d32f2f"/>
+  <circle cx="780" cy="560" r="5" fill="#2b2b2b"/>
+  <text x="792" y="384" class="lbl" style="font-weight:bold">C2</text>
+  <text x="792" y="400" class="sm">470µF</text>
+  <text x="792" y="414" class="sm">6.3V</text>
+  <text x="792" y="430" class="hole">I7+ H7−</text>
+
+  <!-- C1 decoupling + VCC link -->
+  <line x1="680" y1="130" x2="680" y2="330" class="p5v"/>
+  <line x1="660" y1="330" x2="700" y2="330" stroke="#2b2b2b" stroke-width="3"/>
+  <line x1="660" y1="342" x2="700" y2="342" stroke="#2b2b2b" stroke-width="3"/>
+  <line x1="680" y1="342" x2="680" y2="560" class="gnd"/>
+  <circle cx="680" cy="130" r="5" fill="#d32f2f"/>
+  <circle cx="680" cy="560" r="5" fill="#2b2b2b"/>
+  <circle cx="680" cy="240" r="5" fill="#d32f2f"/>
+  <text x="690" y="384" class="lbl" style="font-weight:bold">C1</text>
+  <text x="690" y="400" class="sm">0.1µF</text>
+  <text x="690" y="416" class="hole">E3–D6</text>
+  <text x="688" y="184" class="hole">F2→F3</text>
+  <text x="688" y="200" class="sm">~5 mA</text>
+
+  <!-- ATtiny85 -->
+  <rect x="420" y="200" width="180" height="260" rx="4" fill="#f4f4f2" stroke="#2b2b2b" stroke-width="2.5"/>
+  <path d="M495 200 A15 15 0 0 0 525 200" fill="#ffffff" stroke="#2b2b2b" stroke-width="2"/>
+  <text x="510" y="280" text-anchor="middle" class="lbl" style="font-weight:bold;font-size:17px">ATtiny85</text>
+  <text x="510" y="336" text-anchor="middle" class="sm">DIP-8 in socket</text>
+  <text x="510" y="396" text-anchor="middle" class="sm">8 MHz internal clock</text>
+  <!-- left pins 1-4 -->
+  <line x1="380" y1="240" x2="420" y2="240" class="pin"/>
+  <line x1="380" y1="300" x2="420" y2="300" class="pin"/>
+  <line x1="380" y1="360" x2="420" y2="360" class="pin"/>
+  <line x1="380" y1="420" x2="420" y2="420" class="pin"/>
+  <text x="400" y="234" text-anchor="middle" class="pinnum">1</text>
+  <text x="400" y="294" text-anchor="middle" class="pinnum">2</text>
+  <text x="400" y="354" text-anchor="middle" class="pinnum">3</text>
+  <text x="400" y="414" text-anchor="middle" class="pinnum">4</text>
+  <text x="428" y="244" class="pinlbl">PB5 RESET</text>
+  <text x="428" y="304" class="pinlbl">PB3</text>
+  <text x="428" y="364" class="pinlbl" style="fill:#2e9e4f;font-weight:bold">PB4</text>
+  <text x="428" y="424" class="pinlbl">GND</text>
+  <!-- right pins 8-5 -->
+  <line x1="600" y1="240" x2="640" y2="240" class="pin"/>
+  <line x1="600" y1="300" x2="640" y2="300" class="pin"/>
+  <line x1="600" y1="360" x2="640" y2="360" class="pin"/>
+  <line x1="600" y1="420" x2="640" y2="420" class="pin"/>
+  <text x="620" y="234" text-anchor="middle" class="pinnum">8</text>
+  <text x="620" y="294" text-anchor="middle" class="pinnum">7</text>
+  <text x="620" y="354" text-anchor="middle" class="pinnum">6</text>
+  <text x="620" y="414" text-anchor="middle" class="pinnum">5</text>
+  <text x="592" y="244" text-anchor="end" class="pinlbl">VCC</text>
+  <text x="592" y="304" text-anchor="end" class="pinlbl">PB2 SCK</text>
+  <text x="592" y="364" text-anchor="end" class="pinlbl">PB1 MISO</text>
+  <text x="592" y="424" text-anchor="end" class="pinlbl">PB0 MOSI</text>
+  <!-- VCC to node -->
+  <line x1="640" y1="240" x2="680" y2="240" class="p5v"/>
+  <!-- not-connected marks -->
+  <g class="nc">
+    <line x1="374" y1="234" x2="386" y2="246"/><line x1="386" y1="234" x2="374" y2="246"/>
+    <line x1="374" y1="294" x2="386" y2="306"/><line x1="386" y1="294" x2="374" y2="306"/>
+    <line x1="634" y1="294" x2="646" y2="306"/><line x1="646" y1="294" x2="634" y2="306"/>
+    <line x1="634" y1="354" x2="646" y2="366"/><line x1="646" y1="354" x2="634" y2="366"/>
+    <line x1="634" y1="414" x2="646" y2="426"/><line x1="646" y1="414" x2="634" y2="426"/>
+  </g>
+  <text x="652" y="304" class="sm">*</text>
+
+  <!-- pin 4 to GND -->
+  <polyline points="380,420 350,420 350,560" class="gnd"/>
+  <circle cx="350" cy="560" r="5" fill="#2b2b2b"/>
+  <text x="356" y="500" class="hole">C6→C8</text>
+
+  <!-- data: pin 3 -> R1 -> ring DIN -->
+  <line x1="380" y1="360" x2="300" y2="360" class="dat"/>
+  <rect x="240" y="350" width="60" height="20" rx="2" fill="#ffffff" stroke="#2b2b2b" stroke-width="2.5"/>
+  <text x="270" y="364" text-anchor="middle" class="hole" style="font-size:10px">B5/A5</text>
+  <line x1="240" y1="360" x2="200" y2="360" class="dat"/>
+  <text x="270" y="338" text-anchor="middle" class="lbl" style="font-weight:bold">R1 330–470Ω</text>
+  <text x="340" y="352" text-anchor="middle" class="hole">C5→B5</text>
+  <text x="204" y="384" class="hole">A4 → DIN</text>
+  <text x="300" y="400" class="sm" style="fill:#2e9e4f">data only, &lt; 1 mA</text>
+
+  <!-- WS2812B ring -->
+  <rect x="40" y="250" width="160" height="220" rx="10" fill="#1b1d1c" stroke="#2b2b2b" stroke-width="2"/>
+  <text x="120" y="274" text-anchor="middle" style="font-size:13px;font-weight:bold;fill:#ffffff">WS2812B ring</text>
+  <circle cx="120" cy="362" r="40" fill="none" stroke="#444" stroke-width="10"/>
+  <g fill="#f2f0ea" stroke="#444" stroke-width="1">
+    <rect x="114" y="316" width="12" height="12"/>
+    <rect x="142.3" y="327.7" width="12" height="12"/>
+    <rect x="154" y="356" width="12" height="12"/>
+    <rect x="142.3" y="384.3" width="12" height="12"/>
+    <rect x="114" y="396" width="12" height="12"/>
+    <rect x="85.7" y="384.3" width="12" height="12"/>
+    <rect x="74" y="356" width="12" height="12"/>
+    <rect x="85.7" y="327.7" width="12" height="12"/>
+  </g>
+  <g fill="#ff9a3c">
+    <circle cx="120" cy="322" r="3"/><circle cx="148.3" cy="333.7" r="3"/><circle cx="160" cy="362" r="3"/>
+    <circle cx="148.3" cy="390.3" r="3"/><circle cx="120" cy="402" r="3"/><circle cx="91.7" cy="390.3" r="3"/>
+    <circle cx="80" cy="362" r="3"/><circle cx="91.7" cy="333.7" r="3"/>
+  </g>
+  <text x="120" y="440" text-anchor="middle" style="font-size:11px;fill:#cfcfcf">8 LEDs · DOUT unused</text>
+  <text x="120" y="456" text-anchor="middle" style="font-size:11px;fill:#cfcfcf">on 2 nylon standoffs</text>
+  <rect x="194" y="354" width="10" height="12" fill="#d4a017"/>
+  <text x="186" y="351" text-anchor="end" style="font-size:10px;fill:#ffffff">DIN</text>
+  <!-- ring power -->
+  <line x1="120" y1="250" x2="120" y2="130" class="p5v"/>
+  <circle cx="120" cy="130" r="5" fill="#d32f2f"/>
+  <text x="128" y="200" class="hole">D2 → 5V pad</text>
+  <text x="128" y="216" class="sm">up to ~480 mA</text>
+  <line x1="120" y1="470" x2="120" y2="560" class="gnd"/>
+  <circle cx="120" cy="560" r="5" fill="#2b2b2b"/>
+  <text x="128" y="520" class="hole">D8 → GND pad</text>
+
+  <!-- Legend and notes -->
+  <line x1="40" y1="620" x2="960" y2="620" stroke="#e2e4e2" stroke-width="1"/>
+  <line x1="40" y1="648" x2="70" y2="648" class="p5v"/><text x="78" y="652" class="lbl">5V</text>
+  <line x1="120" y1="648" x2="150" y2="648" class="gnd"/><text x="158" y="652" class="lbl">GND</text>
+  <line x1="214" y1="648" x2="244" y2="648" class="dat"/><text x="252" y="652" class="lbl">Data</text>
+  <g class="nc"><line x1="314" y1="642" x2="326" y2="654"/><line x1="326" y1="642" x2="314" y2="654"/></g>
+  <text x="334" y="652" class="lbl">Not connected</text>
+  <text x="460" y="652" class="hole">D2, F2→F3</text>
+  <text x="540" y="652" class="sm">= protoboard holes (columns A–I, rows 1–9)</text>
+  <text x="40" y="682" class="sm">* Pin 7 (PB2) is left floating on purpose; the firmware reads its noise once to seed random().</text>
+  <text x="40" y="700" class="sm">Pins 1, 5, 6, 7 are also the programmer (ISP) pins. Pull the chip from its socket to reprogram it.</text>
+</svg>
